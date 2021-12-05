@@ -37,46 +37,38 @@ function createMap(count) {
     return map;
 }
 
-function plotHLine(map, sX, eX, y) {
-    let current = {x: sX, y: y};
-    let dX = Math.sign(eX - sX);
-    console.log("plotting horizontal");
-    while (true) {
-        map[current.y][current.x]++;
-        current.x += dX;
-        if (current.x == eX) break;
-    }
-}
-
-function plotVLine(map, sY, eY, x) {
-    let current = {x: x, y: sY};
-    let dY = Math.sign(eY - sY);
-    console.log("plotting vertical");
-    while (true) {
-        map[current.y][current.x]++;
-        current.y += dY;
-        if (current.y == eY) break;
-    }
-}
-
-
+// Bresenhams Line algorithm
 function plotBLine(map, sX, sY, eX, eY) {
-    return map;
+    var dx = Math.abs(eX - sX);
+    var dy = Math.abs(eY - sY);
+    var sx = (sX < eX) ? 1 : -1;
+    var sy = (sY < eY) ? 1 : -1;
+    var err = dx - dy;
+ 
+    while(true) {
+        map[sY][sX]++; // Do what you need to for this
+ 
+       if ((sX === eX) && (sY === eY)) break;
+       var e2 = 2*err;
+       if (e2 > -dy) { err -= dy; sX  += sx; }
+       if (e2 < dx) { err += dx; sY  += sy; }
+    }
 }
 
-function plotLine(map, sX, sY, eX, eY) {
+function plotLine(map, d, sX, sY, eX, eY) {
     // Vertical Line
-    if (sX === eX) plotVLine(map, sY, eY, sX);
+    if (sX === eX) plotBLine(map, sX, sY, eX, eY);
     // Horizontal Line
-    else if (sY === eY) plotHLine(map, sX, eX, sY);
-    // Diagonal Line
-    else plotBLine(map, sX, sY, eX, eY);
+    else if (sY === eY) plotBLine(map, sX, sY, eX, eY);
+    // Diagonal line
+    else if (d) plotBLine(map, sX, sY, eX, eY);
 }
 
-function plotMap(map, plotList) {
+
+function plotMap(map, plotList, d) {
     // Go through each line and plot it.
     for (let i = 0; i < plotList.length; i++) {
-        plotLine(map, plotList[i].start.x, plotList[i].start.y, plotList[i].end.x, plotList[i].end.y);
+        plotLine(map, d, plotList[i].start.x, plotList[i].start.y, plotList[i].end.x, plotList[i].end.y);
     }
 }
 
@@ -90,14 +82,22 @@ function countIntersections(map) {
     return ret;
 }
 
+function drawMap(map) {
+    let line = '';
+    for (let y = 0; y < map.length; y++) {
+        line = `${y}:`;
+        for (let x = 0; x < map[y].length; x++) {
+            line += map[y][x];
+        }
+    } 
+}
+
 function solution1(input) {
     let result = 0;
     let plotList = formatData(input);
-    let map = createMap(10);
+    let map = createMap(1000);
 
-    console.log(plotList);
-
-    plotMap(map, plotList);
+    plotMap(map, plotList, false);
 
     result = countIntersections(map);
 
@@ -106,6 +106,12 @@ function solution1(input) {
 
 function solution2(input) {
     let result = 0;
+    let plotList = formatData(input);
+    let map = createMap(1000);
+
+    plotMap(map, plotList, true);
+
+    result = countIntersections(map);
 
     return result;
 }
