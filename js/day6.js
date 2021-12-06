@@ -5,20 +5,22 @@ function formatData(input) {
 
 function solve(input, days) {
     let fishes = formatData(input);
-    const fishCount = Array(10).fill(0);
+    const fishCount = [0,0,0,0,0,0,0,0,0];
+    for (fish of fishes) fishCount[fish]++;
 
-    fishes.forEach(fish => fishCount[fish]++);
-    
     for (let day = 0; day < days; day++) {
-        const scalar = fishCount[0];
-        for (let i = 0; i <= 8; i++) {
-            fishCount[i] = fishCount[i + 1];
-        }
-        fishCount[8] = scalar;
-        fishCount[6] += scalar;
+        // How many fish are spawning today?
+        const newSpawn = fishCount[0];
+        // Move each fish into new state
+        for (let i = 0; i <= 8; i++) fishCount[i] = fishCount[i + 1];
+        // Create the newly spawned fish
+        fishCount[8] = newSpawn;
+        // Move the new parents to their new state
+        fishCount[6] += newSpawn;
     }
 
-    return fishCount.reduce((tot, curr) => tot + curr);
+    // Calculate final total of fish from the state totals
+    return fishCount.reduce((t, c) => t + c);
 }
 
 function solution1(input) {
