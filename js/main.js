@@ -1,9 +1,40 @@
+
+const daySelector = document.getElementById("daySelect");
+const runButton = document.getElementById("runBtn");
+const solutions = [];
+let data = null;
+
 document.querySelector("input[type=file]")
     .addEventListener('change', (e) => e.target.files[0].text()
-        .then(text => run(text.split(/\r?\n/))));
+        .then(text => data = text.split(/\r?\n/)));
 
-function run(input) {
-    document.getElementById("result1").innerText = solution1(input);
-    document.getElementById("result2").innerText = solution2(input);
+runButton.addEventListener('click', () => {
+    if (data) run(parseInt(daySelector.value)-1);
+});
+
+function run(day) {
+    document.getElementById("result1").innerText = solutions[day].one(data);
+    document.getElementById("result2").innerText = solutions[day].two(data);
 }
 
+async function loadSolutions() {
+    const max = 25;
+    let i = 1;
+    while (i < max) {
+        try {
+            const module = await import(`./solutions/day${i}.mjs`);
+            // Create the solution object and added it to the list
+            solutions.push(new module.Solutions());
+            // Add the script to the selector
+            let option = document.createElement("option");
+            option.value = i;
+            option.text = `day ${i}`;
+            daySelector.appendChild(option);
+        } catch (err) {
+            // No more scripts to load
+            break;
+        }
+        i++;
+    }
+}
+loadSolutions();
