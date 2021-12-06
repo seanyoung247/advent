@@ -92,26 +92,30 @@ function drawMap(map) {
     } 
 }
 
-function solution1(input) {
-    let result = 0;
-    let plotList = formatData(input);
-    let map = createMap(1000);
+export const test = true;
 
-    plotMap(map, plotList, false);
+export class Solutions {
+    one(input) {
+        let result = 0;
+        let plotList = formatData(input);
+        let map = createMap(1000);
 
-    result = countIntersections(map);
+        plotMap(map, plotList, false);
 
-    return result;
-}
+        result = countIntersections(map);
 
-function solution2(input) {
-    let result = 0;
-    let plotList = formatData(input);
-    let map = createMap(1000);
+        return result;
+    }
 
-    plotMap(map, plotList, true);
+    two(input) {
+        let result = 0;
+        let plotList = formatData(input);
+        let map = createMap(1000);
 
-    result = countIntersections(map);
+        plotMap(map, plotList, true);
 
-    return result;
+        result = countIntersections(map);
+
+        return result;
+    }
 }

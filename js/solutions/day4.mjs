@@ -83,22 +83,6 @@ class Data {
     }
 }
 
-function solution1(input) {
-    let result = 0;
-    let data = new Data(input);
-    let winner = -1;
-
-    for (const value of data.list) {
-        data.markAllBoards(value);
-        winner = data.checkAllBoards();
-        if (winner != -1) {
-            result = data.scoreUnmarked(winner) * parseInt(value);
-            break;
-        }
-    }
-    return result;
-}
-
 function inList(value, list) {
     for (val of list) {
         if (val.winner === value) return true; 
@@ -106,9 +90,28 @@ function inList(value, list) {
     return false;
 }
 
-function solution2(input) {
-    let result = 0;
+
+export class Solutions {
+    one(input) {
+        let result = 0;
+        let data = new Data(input);
+        let winner = -1;
+
+        for (const value of data.list) {
+            data.markAllBoards(value);
+            winner = data.checkAllBoards();
+            if (winner != -1) {
+                result = data.scoreUnmarked(winner) * parseInt(value);
+                break;
+            }
+        }
+        return result;
+    }
+
+    two(input) {
+        let result = 0;
 
 
-    return result;
+        return result;
+    }
 }
