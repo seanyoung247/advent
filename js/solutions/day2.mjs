@@ -1,7 +1,7 @@
 
 export class Solutions {
     one(input) {
-        let count = {
+        const count = {
             forward: 0,
             down: 0,
             up: 0
@@ -16,26 +16,21 @@ export class Solutions {
     }
 
     two(input) {
-        let count = {
+        const count = {
             position: 0,
             depth: 0,
-            aim: 0
+            aim: 0,
+            down: (val) => count.aim += val,
+            up: (val) => count.aim -= val,
+            forward: (val) => {
+                count.position += val;
+                count.depth += count.aim * val;
+            }
         };
 
-        for (let i = 0; i < input.length; i++) {
-            let command = input[i].split(' ');
-            switch (command[0]) {
-                case "down":
-                    count.aim += parseInt(command[1]);
-                    break;
-                case "up":
-                    count.aim -= parseInt(command[1]);
-                    break;
-                case "forward":
-                    count.position += parseInt(command[1]);
-                    count.depth += count.aim * parseInt(command[1]);
-                    break;
-            }
+        for (const line of input) {
+            let command = line.split(' ').filter((e)=>e);
+            if (command[0]) count[command[0]](parseInt(command[1]));
         }
         return count.position * count.depth;
     }

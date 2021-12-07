@@ -1,6 +1,4 @@
 
-let intersections = 0;
-
 function formatData(input) {
     let plotList = [];
     let temp = '';
@@ -91,9 +89,6 @@ function drawMap(map) {
         }
     } 
 }
-
-export const test = true;
-
 export class Solutions {
     one(input) {
         let result = 0;

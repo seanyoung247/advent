@@ -5,6 +5,7 @@ class Data {
         this.boards = [];
         this.matrix = [];
         this.hasWon = [];
+        this.winners = [];
         let b = -1;
     
         for (let i = 1; i < input.length; i++) {
@@ -47,10 +48,12 @@ class Data {
     }
 
     checkBoard(b) {
-        for (let y = 0; y < this.matrix[b].length; y++) {
-            if (this.checkRow(b, y)) return true;
-            for (let x = 0; x < this.matrix[b][y].length; x++) {
-                if (this.checkColumn(b,x)) return true;
+        if (!this.hasWon[b]) {
+            for (let y = 0; y < this.matrix[b].length; y++) {
+                if (this.checkRow(b, y)) return true;
+                for (let x = 0; x < this.matrix[b][y].length; x++) {
+                    if (this.checkColumn(b,x)) return true;
+                }
             }
         }
         return false;
@@ -58,13 +61,19 @@ class Data {
 
     checkAllBoards() {
         for (let b = 0; b < this.boards.length; b++) {
-            if (this.checkBoard(b)) return b;
+            if (this.checkBoard(b)) {
+                this.hasWon[b] = true;
+                this.winners.push(b);
+                return b;
+            }
+
         }
         return -1;
     }
 
     scoreUnmarked(b) {
         let total = 0;
+        console.log(b);
         for (let y = 0; y < this.boards[b].length; y++) {
             for (let x = 0; x < this.boards[b][y].length; x++) {
                 if (!this.matrix[b][y][x]) {
@@ -72,6 +81,8 @@ class Data {
                 }
             }
         }
+        console.log(this.matrix[b]);
+        console.log(total);
         return total;
     }
 
@@ -100,18 +111,23 @@ export class Solutions {
         for (const value of data.list) {
             data.markAllBoards(value);
             winner = data.checkAllBoards();
-            if (winner != -1) {
-                result = data.scoreUnmarked(winner) * parseInt(value);
-                break;
-            }
         }
+        result = data.scoreUnmarked(62) * parseInt(data.winners[62]);
         return result;
     }
 
     two(input) {
         let result = 0;
+        let data = new Data(input);
+        let winner = -1;
 
-
+        for (const value of data.list) {
+            data.markAllBoards(value);
+            winner = data.checkAllBoards();
+        }
+        console.log(data.winners);
+        result = data.scoreUnmarked(60) * parseInt(60);
+        
         return result;
     }
 }
