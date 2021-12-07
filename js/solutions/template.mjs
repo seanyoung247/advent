@@ -1,14 +1,14 @@
 
 // HELPER CODE HERE
 
-export class DayX {
-    solution1(input) {
+export class Solutions {
+    one(input) {
         let result = 0;
         // SOLUTION ONE CODE HERE
         return result;
     }
 
-    solution2(input) {
+    two(input) {
         let result = 0;
         // SOLUTION TWO CODE HERE
         return result;
