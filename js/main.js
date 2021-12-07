@@ -3,11 +3,16 @@ const daySelector = document.getElementById("daySelect");
 const runButton = document.getElementById("runBtn");
 const reloadButton = document.getElementById("reloadBtn");
 const solutions = [];
+let selection = 0;
 let data = null;
 
 document.querySelector("input[type=file]")
     .addEventListener('change', (e) => e.target.files[0].text()
         .then(text => data = text.split(/\r?\n/)));
+
+daySelector.addEventListener('change', () => {
+    selection = daySelector.value - 1;
+});
 
 runButton.addEventListener('click', () => {
     if (data) run(parseInt(daySelector.value)-1);
@@ -42,6 +47,7 @@ async function loadSolutions() {
             let option = document.createElement("option");
             option.value = i;
             option.text = `day ${i}`;
+            if (daySelector.options.length === selection) option.selected = true;
             daySelector.appendChild(option);
         } catch (err) {
             // No more scripts to load
