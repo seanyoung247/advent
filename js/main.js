@@ -1,6 +1,7 @@
 
 const daySelector = document.getElementById("daySelect");
 const runButton = document.getElementById("runBtn");
+const reloadButton = document.getElementById("reloadBtn");
 const solutions = [];
 let data = null;
 
@@ -12,9 +13,20 @@ runButton.addEventListener('click', () => {
     if (data) run(parseInt(daySelector.value)-1);
 });
 
+reloadButton.addEventListener('click', () => {
+    clearSolutions();
+    loadSolutions();
+});
+
 function run(day) {
     document.getElementById("result1").innerText = solutions[day].one(data);
     document.getElementById("result2").innerText = solutions[day].two(data);
+}
+
+function clearSolutions() {
+    selection = daySelector.value - 1;
+    daySelector.innerHTML = "";
+    solutions.length = 0;
 }
 
 async function loadSolutions() {
@@ -22,7 +34,8 @@ async function loadSolutions() {
     let i = 1;
     while (i < max) {
         try {
-            const module = await import(`./solutions/day${i}.mjs`);
+            // Scripts are cached so the random url param is used to force reloading
+            const module = await import(`./solutions/day${i}.mjs?rand=${Math.random()}`);
             // Create the solution object and added it to the list
             solutions.push(new module.Solutions());
             // Add the script to the selector
