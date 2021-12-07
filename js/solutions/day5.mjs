@@ -1,16 +1,13 @@
 
 function formatData(input) {
     let plotList = [];
-    let temp = '';
-    let coord = [];
-    //x,y -> x,y
-    for (let i = 0; i < input.length; i++) {
-        if (input[i] !== "") {
+    for (const line of input) {
+        if (line !== "") {
             let plot = {start: {x:0,y:0}, end:{x:0,y:0}};
             // Split out beginning and end coords
-            temp = input[i].split(' -> ');
+            const temp = line.split(' -> ');
             // Split out start x,y
-            coord = temp[0].split(',');
+            let coord = temp[0].split(',');
             plot.start.x = parseInt(coord[0]);
             plot.start.y = parseInt(coord[1]);
             // Split out end x,y  
@@ -41,15 +38,14 @@ function plotBLine(map, sX, sY, eX, eY) {
     var dy = Math.abs(eY - sY);
     var sx = (sX < eX) ? 1 : -1;
     var sy = (sY < eY) ? 1 : -1;
-    var err = dx - dy;
+    var error = dx - dy;
  
     while(true) {
-        map[sY][sX]++; // Do what you need to for this
- 
-       if ((sX === eX) && (sY === eY)) break;
-       var e2 = 2*err;
-       if (e2 > -dy) { err -= dy; sX  += sx; }
-       if (e2 < dx) { err += dx; sY  += sy; }
+        map[sY][sX]++;
+        if ((sX === eX) && (sY === eY)) break;
+        const e2 = 2 * error;
+        if (e2 > -dy) { error -= dy; sX += sx; }
+        if (e2 < dx) { error += dx; sY += sy; }
     }
 }
 
@@ -65,52 +61,36 @@ function plotLine(map, d, sX, sY, eX, eY) {
 
 function plotMap(map, plotList, d) {
     // Go through each line and plot it.
-    for (let i = 0; i < plotList.length; i++) {
-        plotLine(map, d, plotList[i].start.x, plotList[i].start.y, plotList[i].end.x, plotList[i].end.y);
+    //for (let i = 0; i < plotList.length; i++) {
+    for (const plot of plotList) {
+        plotLine(map, d, plot.start.x, plot.start.y, plot.end.x, plot.end.y);
     }
 }
 
 function countIntersections(map) {
     let ret = 0;
-    for (let y = 0; y < map.length; y++) {
-        for (let x = 0; x < map[y].length; x++) {
-            if (map[y][x] > 1) ret++;
+    for (const column of map) {
+        for (const row of column) {
+            if (row > 1) ret++;
         }
     }
     return ret;
 }
 
-function drawMap(map) {
-    let line = '';
-    for (let y = 0; y < map.length; y++) {
-        line = `${y}:`;
-        for (let x = 0; x < map[y].length; x++) {
-            line += map[y][x];
-        }
-    } 
-}
 export class Solutions {
     one(input) {
-        let result = 0;
         let plotList = formatData(input);
         let map = createMap(1000);
 
         plotMap(map, plotList, false);
-
-        result = countIntersections(map);
-
-        return result;
+        return countIntersections(map);
     }
 
     two(input) {
-        let result = 0;
         let plotList = formatData(input);
         let map = createMap(1000);
 
         plotMap(map, plotList, true);
-
-        result = countIntersections(map);
-
-        return result;
+        return countIntersections(map);
     }
 }
