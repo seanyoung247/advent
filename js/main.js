@@ -39,7 +39,7 @@ async function loadSolutions() {
     let i = 1;
     while (i < max) {
         try {
-            // Scripts are cached so the random url param is used to force reloading
+            // Scripts are cached so the random url param is needed to force reloading
             const module = await import(`./solutions/day${i}.mjs?rand=${Math.random()}`);
             // Create the solution object and added it to the list
             solutions.push(new module.Solutions());
@@ -50,7 +50,7 @@ async function loadSolutions() {
             if (daySelector.options.length === selection) option.selected = true;
             daySelector.appendChild(option);
         } catch (err) {
-            // No more scripts to load
+            // No more scripts to load or script parse error
             break;
         }
         i++;
