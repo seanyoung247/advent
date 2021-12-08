@@ -1,133 +1,130 @@
 
-class Data {
-    constructor(input) {
-        this.list = input[0].split(',');
-        this.boards = [];
-        this.matrix = [];
-        this.hasWon = [];
-        this.winners = [];
-        let b = -1;
+class Board {
+    constructor() {
+        this.board = [];
+        this.marked = [];
+        this.hasWon = false;
+    }
     
-        for (let i = 1; i < input.length; i++) {
-            if (input[i] == "") {
-                // Starting a new board
-                this.boards.push([]); b++;
-                this.matrix.push([]);
-                this.hasWon.push(false);
-            } else {
-                // Adding a row to an existing board
-                this.boards[b].push(input[i].split(' ').filter(i => i));
-                this.matrix[b].push([false,false,false,false,false]);
-            }
-        }
+    addRow(row) {
+        this.board.push(row);
+        this.marked.push([false,false,false,false,false]);
     }
 
-    markAllBoards(value) {
-        for (let b = 0; b < this.boards.length; b++) {
-            for (let y = 0; y < this.boards[b].length; y++) {
-                for (let x = 0; x < this.boards[b][y].length; x++) {
-                    if (this.boards[b][y][x] === value) {
-                        this.matrix[b][y][x] = true;
-                    }
+    _checkRow(row) {
+        for (const cell of this.marked[row]) {
+            if (!cell) return false;
+        }
+        return true;
+    }
+
+    _checkCol(col) {
+        for (const row of this.marked) {
+            if(!row[col]) return false;
+        }
+        return true;
+    }
+
+    check() {
+        if (!this.hasWon) {
+            for (let row = 0; row < this.marked.length; row++) {
+                if (this._checkRow(row)) {
+                    this.hasWon = true;
+                    return true;
                 }
             }
-        }
-    }
-
-    checkRow(b, y) {
-        for (let val of this.matrix[b][y]) {
-            if (!val) return false;
-        }
-        return true;
-    }
-    checkColumn(b, x) {
-        for (let val of this.matrix[b]) {
-            if (!val[x]) return false;
-        }
-        return true;
-    }
-
-    checkBoard(b) {
-        if (!this.hasWon[b]) {
-            for (let y = 0; y < this.matrix[b].length; y++) {
-                if (this.checkRow(b, y)) return true;
-                for (let x = 0; x < this.matrix[b][y].length; x++) {
-                    if (this.checkColumn(b,x)) return true;
+            for (let col = 0; col < this.marked.length; col++) {
+                if (this._checkCol(col)) {
+                    this.hasWon = true;
+                    return true;
                 }
             }
         }
         return false;
     }
 
-    checkAllBoards() {
-        for (let b = 0; b < this.boards.length; b++) {
-            if (this.checkBoard(b)) {
-                this.hasWon[b] = true;
-                this.winners.push(b);
-                return b;
-            }
-
-        }
-        return -1;
-    }
-
-    scoreUnmarked(b) {
-        let total = 0;
-        console.log(b);
-        for (let y = 0; y < this.boards[b].length; y++) {
-            for (let x = 0; x < this.boards[b][y].length; x++) {
-                if (!this.matrix[b][y][x]) {
-                    total += parseInt(this.boards[b][y][x]);
+    mark(num) {
+        if (!this.hasWon) {
+            for (let row = 0; row < this.board.length; row++) {
+                for (let col = 0; col < this.board[row].length; col++) {
+                    if (this.board[row][col] === num) {
+                        this.marked[row][col] = true;
+                        return;
+                    }
                 }
             }
         }
-        console.log(this.matrix[b]);
-        console.log(total);
+    }
+
+    scoreUnmarked() {
+        let total = 0;
+        for (let row = 0; row < this.board.length; row++) {
+            for (let col = 0; col < this.board[row].length; col++) {
+                if (!this.marked[row][col]) {
+                    total += this.board[row][col];
+                }
+            }
+        }
         return total;
     }
+}
 
-    checkAllWon() {
-        for (const board of this.hasWon) {
-            if (!board) return false;
+function formatData(input) {
+    // Get number list
+    input = [...input];
+    const game = {
+        numbers: input.shift().split(',').map(Number),
+        boards: [],
+        winners: [],
+    }
+    // Build boards
+    for (const line of input) {
+        if (!line) {
+            // Start a new board on an empty line
+            game.boards.push(new Board());
+        } else {
+            game.boards[game.boards.length - 1]
+                .addRow(line.split(' ').filter(i => i).map(Number));
         }
-        return true;
     }
+
+    return game;
 }
 
-function inList(value, list) {
-    for (val of list) {
-        if (val.winner === value) return true; 
+function play(game) {
+    for (const num of game.numbers) {
+        for (const board of game.boards) {
+            // Mark the boards
+            board.mark(num);
+            // Check for winner
+            if (board.check()) {
+                game.winners.push({
+                    board: game.boards.indexOf(board),
+                    number: num
+                });
+            }
+        }
     }
-    return false;
 }
-
 
 export class Solutions {
     one(input) {
-        let result = 0;
-        let data = new Data(input);
-        let winner = -1;
+        const game = formatData(input);
+        play(game);
 
-        for (const value of data.list) {
-            data.markAllBoards(value);
-            winner = data.checkAllBoards();
-        }
-        result = data.scoreUnmarked(62) * parseInt(data.winners[62]);
-        return result;
+        const winner = game.winners[0].board;
+        const number = game.winners[0].number;
+
+        return (game.boards[winner].scoreUnmarked() * number);
     }
 
     two(input) {
-        let result = 0;
-        let data = new Data(input);
-        let winner = -1;
+        const game = formatData(input);
+        play(game);
 
-        for (const value of data.list) {
-            data.markAllBoards(value);
-            winner = data.checkAllBoards();
-        }
-        console.log(data.winners);
-        result = data.scoreUnmarked(60) * parseInt(60);
-        
-        return result;
+        const winner = game.winners[game.winners.length-1].board;
+        const number = game.winners[game.winners.length-1].number;
+
+        return (game.boards[winner].scoreUnmarked() * number);
     }
 }
