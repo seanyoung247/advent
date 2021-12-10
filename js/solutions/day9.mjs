@@ -78,7 +78,6 @@ export class Solutions {
             basins.push(mapBasin(input, visited, point.row, point.col, w));
         }
         basins.sort((a,b)=>b-a);
-        console.log(basins);
         return (basins[0] * basins[1] * basins[2]);
     }
 }
