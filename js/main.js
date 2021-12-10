@@ -51,6 +51,7 @@ async function loadSolutions() {
             daySelector.appendChild(option);
         } catch (err) {
             // No more scripts to load or script parse error
+            console.log(err);
             break;
         }
         i++;
