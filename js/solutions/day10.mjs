@@ -29,13 +29,13 @@ export class Solutions {
             for (const symbol of line) {
                 // Opening or closing bracket?
                 if (symbolMap[symbol]) {
-                    // Opening
+                    // Opening - push the expected closing bracket to the stack
                     symbolStack.push(symbolMap[symbol]);
                 } else {
-                    // Closing
+                    // Closing, does the current closing bracket match what we're expecting?
                     const expected = symbolStack.pop();
                     if (expected != symbol) {
-                        // Corrupted!
+                        // Wrong symbol encountered, this line is corrupted!
                         symbolCount[symbol]++;
                     }
                 }
@@ -88,6 +88,7 @@ export class Solutions {
             for (const symbol of symbolStack) {
                 result = (result * 5) + symbolScore[symbol];
             }
+            // Only add the score if it's not corrupted
             if (result > 0) lineScores.push(result);
             symbolStack.length = 0;
         }
