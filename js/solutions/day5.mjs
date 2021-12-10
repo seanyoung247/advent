@@ -61,7 +61,6 @@ function plotLine(map, d, sX, sY, eX, eY) {
 
 function plotMap(map, plotList, d) {
     // Go through each line and plot it.
-    //for (let i = 0; i < plotList.length; i++) {
     for (const plot of plotList) {
         plotLine(map, d, plot.start.x, plot.start.y, plot.end.x, plot.end.y);
     }
@@ -77,20 +76,20 @@ function countIntersections(map) {
     return ret;
 }
 
+function solve(input, d) {
+    let plotList = formatData(input);
+    let map = createMap(1000);
+
+    plotMap(map, plotList, d);
+    return countIntersections(map);
+}
+
 export class Solutions {
     one(input) {
-        let plotList = formatData(input);
-        let map = createMap(1000);
-
-        plotMap(map, plotList, false);
-        return countIntersections(map);
+        return solve(input, false);
     }
 
     two(input) {
-        let plotList = formatData(input);
-        let map = createMap(1000);
-
-        plotMap(map, plotList, true);
-        return countIntersections(map);
+        return solve(input, true);
     }
 }

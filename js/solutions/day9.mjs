@@ -71,7 +71,8 @@ export class Solutions {
                 }
             }
         }
-        // col + (row * width)
+        
+        // Map basins
         const w = input[0].length;
         for (const point of lowPoints) {
             const visited = new Array(input.length * w).fill(false);

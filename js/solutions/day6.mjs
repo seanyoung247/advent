@@ -23,8 +23,6 @@ function solve(input, days) {
     return fishState.reduce((t, c) => t + c);
 }
 
-export const test = true;
-
 export class Solutions {
     one(input) {
         return solve(input, 80);
