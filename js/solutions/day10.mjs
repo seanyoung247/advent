@@ -62,7 +62,7 @@ export class Solutions {
 
         input = formatData(input);
 
-        // Read counts
+        // Read lines
         for (const line of input) {
             if (!parseLine(line, symbolStack, ()=>{})) {
                 // Score Line
