@@ -35,9 +35,13 @@ function clearSolutions() {
 }
 
 async function loadSolutions() {
-    const max = 25;
-    let i = 1;
-    while (i < max) {
+    const date = new Date();
+    const d = date.getDate();
+    const m = date.getMonth() + 1;
+    const y = date.getFullYear();
+    const max = (m===12&&y===2021)?(Math.min(25,d)):25;
+
+    for (let i = 1; i <= max; i++) {
         try {
             // Scripts are cached so the random url param is needed to force reloading
             const module = await import(`./solutions/day${i}.mjs?rand=${Math.random()}`);
@@ -54,7 +58,6 @@ async function loadSolutions() {
             console.log(err);
             break;
         }
-        i++;
     }
 }
 loadSolutions();
