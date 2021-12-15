@@ -57,7 +57,7 @@ function solve(input, steps) {
 
     chars = chars.filter(e=>e!=0);
     chars.sort((a,b)=>a-b);
-    return (chars[chars.length-1]-chars[0]);
+    return (chars.at(-1)-chars[0]);
 }
 
 export class Solutions {
