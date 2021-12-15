@@ -20,8 +20,10 @@ class Node {
         this.visited = false;
         this.parent = null;
     }
+    manhattan(pos) {
+        return Math.abs(this.x - pos.x) + Math.abs(this.y - pos.y);
+    }
     distance(pos) {
-        //return Math.abs(this.x - pos.x) + Math.abs(this.y - pos.y);
         return Math.sqrt(sqr(this.x-pos.x) + sqr(this.y-pos.y));
     }
 }
