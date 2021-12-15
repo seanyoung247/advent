@@ -1,29 +1,32 @@
 
 function formatData(input) {
     const map = [];
-    let x = 0;
-    for (const line of input) {
-        map.push(line.split('').map(
-            (e,y) => new Position( x, y, parseInt(e) )
-        ));
-        x++;
+    for (let x = 0; x < input.length; x++) {
+        if (input[x]) {
+            map.push( input[x].split('').map( (e,y)=>new Node(x,y,parseInt(e)) ) );
+        }
     }
     return map;
 }
 
 const sqr = (n) => n*n; 
-class Position {
-    constructor(x,y,v) {
+class Node {
+    constructor(x,y,c) {
         this.x = x;
         this.y = y;
-        this.value = v;
+        this.cost = c;
+
+        this.totalCost = Number.MAX_VALUE;
+        this.visited = false;
+        this.parent = null;
     }
     distance(pos) {
-        return Math.sqrt(sqr(x-pos.x) + sqr(y-pos.y));
+        //return Math.abs(this.x - pos.x) + Math.abs(this.y - pos.y);
+        return Math.sqrt(sqr(this.x-pos.x) + sqr(this.y-pos.y));
     }
 }
 
-class Graph {
+export class Graph {
     constructor() {
         this.nodes = new Map();
     }
@@ -43,33 +46,79 @@ class Graph {
 
     get nodeMap() {return this.nodes;}
 
-    aStar(start, end) {
-        const distances = new Map();
-        const priorities = new Map();
+    DA(start, goal) {
+        const front = [];
+        front.push({n: start, w: 0});
+        start.totalCost = 0;
 
-        priorities.add()
+        while (front.length) {
+            const node = front.pop();
+
+            if (node.n === goal) return node.n;
+
+            for (const next of this.nodes.get(node.n).values()) {
+                const cost = node.n.totalCost + next.cost;
+
+                if (!next.visited || cost < next.totalCost) {
+                    next.visited = true;
+                    next.totalCost = cost;
+                    const weight = cost + next.distance(goal);
+                    front.push({n: next, w: weight});
+                    next.parent = node.n;
+                }
+            }
+            front.sort((a,b)=>a.w-b.w);
+        }
+        return null;
+    }
+
+    D(start, goal) {
+        const front = [];
+        const origin = new Map;
+        const totalCost = new Map;
+
+        front.push({n:start,w:0});
+        origin.set(start, null);
+        totalCost.set(start, 0);
+
+        while (front.length) {
+            const node = front.pop().n;
+
+            if (node == goal) return [node, origin];
+
+            for (const next of this.nodes.get(node)) {
+                const cost = totalCost.get(node) + next.cost;
+
+                if (!totalCost.has(next) || cost < totalCost.get(next)) {
+                    totalCost.set(next, cost);
+                    front.push({n:next, w:cost});
+                    origin.set(next, node);
+                }
+            }
+
+            front.sort((a,b)=>a.w-b.w);
+        }
     }
     
     DFS(start, end) {
         const stack = [];
         const path = [];
-        const visited = {};
+        const visited = new Map();
 
         stack.push(start);
 
         while(stack.length) {
             const vert = stack.pop();
             
-            if (!visited[vert]) {
-                visited[vert] = true;
+            if (!visited.has(vert)) {
+                visited.set(vert, true);
                 path.push(vert);
 
                 if (vert === end) return path;
 
                 const edges = this.nodes.get(vert);
                 for (const edge of edges.values()) {
-                    if (!visited[edge]) {
-                        console.log(edge);
+                    if (!visited.has(edge)) {
                         stack.push(edge);
                     }
                 }
@@ -87,16 +136,15 @@ function mapToGraph(map) {
     const graph = new Graph();
     for (let x = 0; x < map.length; x++) {
         for (let y = 0; y < map[x].length; y++) {
-            const pos = map[x][y];
-            const right = map[x][y-1];
-            const down = map[x][y-1];
-            
-            graph.addVertex(pos);
-            if (y < map[x].length-1) graph.addVertex(right);
-            if (x < map.length-1) graph.addVertex(down);
-
-            graph.addEdge(pos, right);
-            graph.addEdge(pos, down);
+            graph.addVertex(map[x][y]);
+            if (x < map.length-1) {
+                graph.addVertex(map[x+1][y]);
+                graph.addEdge(map[x][y], map[x+1][y]);
+            }
+            if (y < map[x].length-1) {
+                graph.addVertex(map[x][y+1]);
+                graph.addEdge(map[x][y], map[x][y+1]);
+            }
         }
     }
     return graph;
@@ -106,14 +154,12 @@ export class Solutions {
     one(input) {
         const map = formatData([...input]);
         const graph = mapToGraph(map);
-        console.log(map[0][0]===map[0][0]);
-        console.log(map[0][0]===map.at(-1).at(-1));
-        const path = graph.DFS(map[0][0],map.at(-1).at(-1));
-       // graph.listConnections();
+
+        const path = graph.DA(map[0][0], map.at(-1).at(-1));
 
         let cost = 0;
-        for (const step of path) {
-            cost += map[step.x][step.y].value;
+        for (const node of path) {
+            cost += node.cost;
         }
 
         return cost;
