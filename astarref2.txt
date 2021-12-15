@@ -16,3 +16,5 @@ while (the destination node has not been reached):
 
             else if this neighbor is not in both lists:
                 add it to the open list and set its g
+
+https://www.redblobgames.com/pathfinding/a-star/implementation.html
