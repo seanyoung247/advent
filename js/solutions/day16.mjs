@@ -109,11 +109,11 @@ class OpProductPacket extends OperatorPacket {
 } PacketFactory.register(1, (h, b, s)=>new OpProductPacket(h,b,s));
 
 class OpMinPacket extends OperatorPacket {
-    evaluate() { return this.packets.reduce((min, packet) => Math.min(packet.evaluate(), min)); }
+    evaluate() { return this.packets.reduce((min, packet) => Math.min(packet.evaluate(), min), Infinity); }
 } PacketFactory.register(2, (h, b, s)=>new OpMinPacket(h,b,s));
 
 class OpMaxPacket extends OperatorPacket {
-    evaluate() { return this.packets.reduce((min, packet) => Math.min(packet.evaluate(), min)); }
+    evaluate() { return this.packets.reduce((max, packet) => Math.max(packet.evaluate(), max), -Infinity); }
 } PacketFactory.register(3, (h, b, s)=>new OpMaxPacket(h,b,s));
 
 class OpGreaterPacket extends OperatorPacket {
