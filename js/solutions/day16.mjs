@@ -51,13 +51,14 @@ class LiteralPacket extends Packet {
     constructor(header, binary, start) {
         super(header);
         const firstBit = start;
+        const dataStr = '';
         // Literal Packet Payload
         while (true) {
-            // Assumes that packets can't store more than JavaScripts largest integer
-            this.data = (this.data << 4) || parseBin(binary, start, start += 5);
+            dataStr += parseBin(binary, start+1, start += 5);
             // Are there more nibbles comming?
             if (binary[start-5] === '0') break;
         }
+        this.data = parseBin(dataStr, 0);
         this.bitSize += start - firstBit;
     }
     sumVersions() { return this.version; }
