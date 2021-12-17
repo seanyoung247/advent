@@ -2,6 +2,8 @@
 const daySelector = document.getElementById("daySelect");
 const runButton = document.getElementById("runBtn");
 const reloadButton = document.getElementById("reloadBtn");
+const testInput = document.getElementById("testData");
+const testButton = document.getElementById("runTest");
 const solutions = [];
 let selection = 0;
 let data = null;
@@ -15,7 +17,11 @@ daySelector.addEventListener('change', () => {
 });
 
 runButton.addEventListener('click', () => {
-    if (data) run(parseInt(daySelector.value)-1);
+    if (data) run(parseInt(daySelector.value)-1, data);
+});
+
+testButton.addEventListener('click', () => {
+    if (testInput.value) run(parseInt(daySelector.value-1), [testInput.value]);
 });
 
 reloadButton.addEventListener('click', () => {
@@ -23,9 +29,9 @@ reloadButton.addEventListener('click', () => {
     loadSolutions();
 });
 
-function run(day) {
-    document.getElementById("result1").innerText = solutions[day].one(data);
-    document.getElementById("result2").innerText = solutions[day].two(data);
+function run(day, dataInput) {
+    document.getElementById("result1").innerText = solutions[day].one(dataInput);
+    document.getElementById("result2").innerText = solutions[day].two(dataInput);
 }
 
 function clearSolutions() {
