@@ -54,19 +54,21 @@ export class Graph {
         start.totalCost = 0;
 
         while (front.length) {
-            const node = front.pop();
+            const node = front.pop().n;
 
-            if (node.n === goal) return node.n;
+            if (node === goal) {
+                return node;
+            }
 
-            for (const next of this.nodes.get(node.n).values()) {
-                const cost = node.n.totalCost + next.cost;
+            for (const next of this.nodes.get(node).values()) {
+                const cost = node.totalCost + next.cost;
 
                 if (!next.visited || cost < next.totalCost) {
                     next.visited = true;
                     next.totalCost = cost;
                     const weight = cost + next.distance(goal);
                     front.push({n: next, w: weight});
-                    next.parent = node.n;
+                    next.parent = node;
                 }
             }
             front.sort((a,b)=>a.w-b.w);
@@ -86,12 +88,14 @@ export class Graph {
         while (front.length) {
             const node = front.pop().n;
 
-            if (node == goal) return [node, origin];
+            if (node == goal) return node;
 
             for (const next of this.nodes.get(node)) {
                 const cost = totalCost.get(node) + next.cost;
+                // console.log(node, cost);
 
                 if (!totalCost.has(next) || cost < totalCost.get(next)) {
+                    next.parent = node;
                     totalCost.set(next, cost);
                     front.push({n:next, w:cost});
                     origin.set(next, node);
@@ -139,13 +143,15 @@ function mapToGraph(map) {
     for (let x = 0; x < map.length; x++) {
         for (let y = 0; y < map[x].length; y++) {
             graph.addVertex(map[x][y]);
-            if (x < map.length-1) {
-                graph.addVertex(map[x+1][y]);
-                graph.addEdge(map[x][y], map[x+1][y]);
-            }
+
             if (y < map[x].length-1) {
                 graph.addVertex(map[x][y+1]);
                 graph.addEdge(map[x][y], map[x][y+1]);
+            }
+
+            if (x < map.length-1) {
+                graph.addVertex(map[x+1][y]);
+                graph.addEdge(map[x][y], map[x+1][y]);
             }
         }
     }
@@ -157,11 +163,21 @@ export class Solutions {
         const map = formatData([...input]);
         const graph = mapToGraph(map);
 
-        const path = graph.DA(map[0][0], map.at(-1).at(-1));
+        //const node = graph.DA(map[0][0], map.at(-1).at(-1));
+        let node = graph.D(map[0][0], map.at(-1).at(-1));
 
-        let cost = 0;
-        for (const node of path) {
-            cost += node.cost;
+        let cost = 0// totalCost[node];
+        // for (const node of path) {
+        //     cost += node.cost;
+        // }
+        let last = null;
+        while (node != map[0][0]) {
+            if (node != last) {
+                console.log(node);
+                cost += node.cost;
+                last = node;
+                node = node.parent;
+            }
         }
 
         return cost;
