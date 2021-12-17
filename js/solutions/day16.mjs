@@ -51,7 +51,7 @@ class LiteralPacket extends Packet {
     constructor(header, binary, start) {
         super(header);
         const firstBit = start;
-        const dataStr = '';
+        let dataStr = '';
         // Literal Packet Payload
         while (true) {
             dataStr += parseBin(binary, start+1, start += 5);
