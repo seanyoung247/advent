@@ -1,5 +1,7 @@
 
-// HELPER CODE HERE
+function formatData(input) {
+    
+}
 
 export class Solutions {
     one(input) {
