@@ -54,9 +54,9 @@ class LiteralPacket extends Packet {
         let dataStr = '';
         // Literal Packet Payload
         while (true) {
-            dataStr += parseBin(binary, start+1, start += 5);
-            // Are there more nibbles comming?
-            if (binary[start-5] === '0') break;
+          const nibble = binary.substring(start, start += 5);
+          dataStr += nibble.substr(1);
+          if (nibble[0] === '0') break;
         }
         this.data = parseBin(dataStr, 0);
         this.bitSize += start - firstBit;
