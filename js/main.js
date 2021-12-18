@@ -21,7 +21,7 @@ runButton.addEventListener('click', () => {
 });
 
 testButton.addEventListener('click', () => {
-    if (testInput.value) run(parseInt(daySelector.value-1), [testInput.value]);
+    if (testInput.value) run(parseInt(daySelector.value-1), testInput.value.split(/\r?\n/));
 });
 
 reloadButton.addEventListener('click', () => {
