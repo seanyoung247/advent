@@ -4,6 +4,10 @@ const runButton = document.getElementById("runBtn");
 const reloadButton = document.getElementById("reloadBtn");
 const testInput = document.getElementById("testData");
 const testButton = document.getElementById("runTest");
+
+const testExpect = [document.getElementById("testExpect1"),document.getElementById("testExpect2")];
+const testMatch = [document.getElementById("testMatch1"),document.getElementById("testMatch2")];
+
 const solutions = [];
 let selection = 0;
 let data = null;
@@ -22,6 +26,10 @@ runButton.addEventListener('click', () => {
 
 testButton.addEventListener('click', () => {
     if (testInput.value) run(parseInt(daySelector.value-1), testInput.value.split(/\r?\n/));
+    testMatch[0].innerText = "No Match";
+    testMatch[1].innerText = "No Match";
+    if (testExpect[0].value === document.getElementById("result1").innerText) testMatch[0].innerText = "Match";
+    if (testExpect[1].value === document.getElementById("result2").innerText) testMatch[1].innerText = "Match";
 });
 
 reloadButton.addEventListener('click', () => {
@@ -30,6 +38,8 @@ reloadButton.addEventListener('click', () => {
 });
 
 function run(day, dataInput) {
+    document.getElementById("result1").innerText = '';
+    document.getElementById("result2").innerText = '';
     document.getElementById("result1").innerText = solutions[day].one(dataInput);
     document.getElementById("result2").innerText = solutions[day].two(dataInput);
 }
