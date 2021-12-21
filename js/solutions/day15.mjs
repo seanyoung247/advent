@@ -16,79 +16,200 @@ class Node {
         this.y = y;
         this.cost = c;
 
-        this.dist = Number.MAX_VALUE;
+        this.totalCost = Number.MAX_VALUE;
         this.visited = false;
-        this.f = 0;
         this.parent = null;
     }
-    distance(pos) {
-        //return Math.sqrt(sqr(this.x-pos.x) + sqr(this.y-pos.y));
+    // Manhattan distance
+    manhattan(pos) {
         return Math.abs(this.x - pos.x) + Math.abs(this.y - pos.y);
     }
+    // Euclidean distance
+    distance(pos) {
+        return Math.sqrt(sqr(this.x-pos.x) + sqr(this.y-pos.y));
+    }
 }
 
-function getAdjacent(map, center) {
-    const {x,y} = center;
-    //const up = (x > 0) ? map[x-1][y] : null;
-    const down = (x < map.length-1) ? map[x+1][y] : null;
-    //const left = (y > 0) ? map[x][y-1] : null;
-    const right = (y < map[x].length-1) ? map[x][y+1] : null;
+export class Graph {
+    constructor() {
+        this.nodes = new Map();
+    }
 
-    //return [up, down, left, right];
-    return [down, right];
-}
-
-function dSetup(map) {
-    const d = new Map();
-    for (let x = 0; x < map.length; x++) {
-        for (let y = 0; y < map[x].length; y++) {
-            d.set(map[x][y], Number.MAX_VALUE);
+    addVertex(vertex) {
+        if (!this.nodes.has(vertex)) {
+            this.nodes.set(vertex, new Set());
         }
     }
-    return d;
-}
 
-function dijkstra(map, start) {
-    const dist = dSetup(map);
-    dist.set(start, 0);
-    const pq = [];
-    start.f = 0;
-    pq.push(start);
+    addEdge(v1, v2) {
+        if (this.nodes.has(v1) && this.nodes.has(v2)) {
+            this.nodes.get(v1).add(v2);
+            this.nodes.get(v2).add(v1);
+        }
+    }
 
-    while (pq.length) {
-        const current = pq.pop();
-        current.visited = true;
+    get nodeMap() {return this.nodes;}
 
-        const adjacent = getAdjacent(map, current);
-        for (const next of adjacent) {
-            if (next) {
-                const d = next.cost;
-                if (!next.visited) {
-                    const oldCost = dist.get(next);
-                    const newCost = dist.get(current) + d;
-                    if (newCost < oldCost) {
-                        next.f = newCost;
-                        pq.push(next);
-                        dist.set(next, newCost);
+    // Modified aStar
+    DA(start, goal) {
+        const front = [];
+        front.push({n: start, w: 0});
+        start.totalCost = 0;
+
+        while (front.length) {
+            const node = front.pop().n;
+
+            if (node === goal) {
+                return node;
+            }
+
+            for (const next of this.nodes.get(node).values()) {
+                const cost = node.totalCost + next.cost;
+
+                if (!next.visited || cost < next.totalCost) {
+                    next.visited = true;
+                    next.totalCost = cost;
+                    const weight = cost + next.manhattan(goal);
+                    front.push({n: next, w: weight});
+                    next.parent = node;
+                }
+            }
+            front.sort((a,b)=>b.w-a.w);
+        }
+        return null;
+    }
+
+    // Dijikstra's
+    D(start, goal) {
+        const front = [];
+        const origin = new Map;
+        const totalCost = new Map;
+
+        front.push({n:start,w:0});
+        origin.set(start, null);
+        totalCost.set(start, 0);
+
+        while (front.length) {
+            const node = front.pop().n;
+
+            if (node == goal) {
+                return node;
+            }
+
+            for (const next of this.nodes.get(node)) {
+                const cost = totalCost.get(node) + next.cost;
+
+                if (!totalCost.has(next) || cost < totalCost.get(next)) {
+                    next.parent = node;
+                    totalCost.set(next, cost);
+                    front.push({n:next, w:cost});
+                    origin.set(next, node);
+                }
+            }
+
+            front.sort((a,b)=>b.w-a.w);
+        }
+    }
+    
+    // Depth first search
+    DFS(start, end) {
+        const stack = [];
+        const path = [];
+        const visited = new Map();
+
+        stack.push(start);
+
+        while(stack.length) {
+            const vert = stack.pop();
+            
+            if (!visited.has(vert)) {
+                visited.set(vert, true);
+                path.push(vert);
+
+                if (vert === end) return path;
+
+                const edges = this.nodes.get(vert);
+                for (const edge of edges.values()) {
+                    if (!visited.has(edge)) {
+                        stack.push(edge);
                     }
                 }
             }
-            pq.sort((a,b)=>b.f-a.f);
+        }
+        return [];
+    }
+
+    listConnections() {
+        this.nodes.forEach((node, index) => console.log(`${index} -> ${[...node]}`) );
+    }
+}
+
+function mapToGraph(map) {
+    const graph = new Graph();
+    for (let x = 0; x < map.length; x++) {
+        for (let y = 0; y < map[x].length; y++) {
+            graph.addVertex(map[x][y]);
+
+            if (y < map[x].length-1) {
+                graph.addVertex(map[x][y+1]);
+                graph.addEdge(map[x][y], map[x][y+1]);
+            }
+
+            if (x < map.length-1) {
+                graph.addVertex(map[x+1][y]);
+                graph.addEdge(map[x][y], map[x+1][y]);
+            }
         }
     }
-    return dist;
+    return graph;
+}
+
+function growCave(map, factor) {
+    const oldH = map.length;
+    const newH = oldH * factor;
+    const newMap = new Array(newH);
+    const calcVal = (x, y, oldH, oldW) => (
+        Math.floor( (((map[x % oldH][y % oldW].cost +   // Old Value
+            ((x / oldH) + (y / oldW))) - 1) % 9 )) + 1  // Scale to new position
+    );
+
+    for (let x = 0; x < newH; x++) {
+        const oldW = map[x % oldH].length;
+        const newW = oldW * factor;
+        newMap[x] = new Array(newW);
+        for (let y = 0; y < newW; y++) {
+            newMap[x][y] = new Node(x, y, calcVal(x,y,oldH,oldW));
+        }
+    }
+    return newMap;
+} 
+
+function costPath(start, end) {
+    let cost = 0;
+    let node = end;
+    let pLen = 0; 
+    while (node != start) {
+        cost += node.cost;
+        node = node.parent;
+        pLen++;
+    }
+    console.log(pLen);
+    return cost;
 }
 
 export class Solutions {
     one(input) {
         const map = formatData([...input]);
-
-        const distances = dijkstra(map, map[0][0]);
-        console.log(distances);
-        return distances.get(map.at(-1).at(-1));
+        const graph = mapToGraph(map);
+        //const node = graph.D(map[0][0], map.at(-1).at(-1));
+        let node = graph.DA(map[0][0], map.at(-1).at(-1));
+        return costPath(map[0][0], node);
     }
 
     two(input) {
-        return 0;
+        const map = growCave(formatData([...input]), 5);
+        const graph = mapToGraph(map);
+        let node = graph.D(map[0][0], map.at(-1).at(-1));
+        return costPath(map[0][0], node);
     }
 }
