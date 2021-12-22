@@ -5,7 +5,7 @@ function formatData(input) {
     for (const line of input) {
         if (line) {
             const [state, data] = line.split(' ')
-                .map( (e,i)=>(i>0)?e.split(/=|[..]{2}|,/g):e);
+                .map( (e,i) => (i > 0) ? e.split(/=|[..]{2}|,/g) : e);
             const pos = {on: (state==='on')};
 
             for (let i = 0; i < 3; i++) {
@@ -85,16 +85,10 @@ function solve(initial, constraint) {
 export class Solutions {
     one(input) {
         const bounds = new Region([-50,50],[-50,50],[-50,50]);
-        const initial = formatData([...input]);
-        const volumes = [];
-
-        return solve(initial, (region)=>bounds.contains(region));
+        return solve(formatData([...input]), (region)=>bounds.contains(region));
     }
 
     two(input) {
-        const initial = formatData([...input]);
-        const volumes = [];
-
-        return solve(initial, ()=>true);
+        return solve(formatData([...input]), ()=>true);
     }
 }
