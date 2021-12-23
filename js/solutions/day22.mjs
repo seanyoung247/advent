@@ -64,21 +64,25 @@ class Region {
 function solve(initial, constraint) {
     const volumes = [];
     for (const region of initial) {
+        // Is this a valid region?
         if (constraint(region)) {
-            // Only add a region if it's turning on
-            const newRegion = new Region(region.x,region.y,region.z, region.on);
-            if (region.on) volumes.push(newRegion);
-            // Check if there are any intersections.
+            // Stores new volumes outside of volume list so they don't intersect themselves.
             const newVols = [];
+            // Only add a region if it's turning on
+            if (region.on) newVols.push(new Region(region.x,region.y,region.z, region.on));
+            // Check if there are any intersections.
             for (const volume of volumes) {
-                if (newRegion != volume && volume.intersects(region)) {
-                    // Add a negative volume for the intersection region
-                    newVols.push(volume.intersection(newRegion, !volume.state));
+                // If the new volume intersects an existing one:
+                if (volume.intersects(region)) {
+                    // Add a new volume to mask out the current one
+                    newVols.push(volume.intersection(region, !volume.state));
                 }
             }
+            // Add the new volumes to the list
             for (const volume of newVols) volumes.push(volume);
         }
     }
+    // Result is the negative and positive volumes added together
     return volumes.reduce((p,c) => p += c.value, 0);
 }
 
