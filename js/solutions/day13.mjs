@@ -55,6 +55,7 @@ export class Solutions {
         for (const line of paper) {
             out += line.join('') + '\n';
         }
+        // I'm not going to write an OCR routine...
         console.log(out);
         return 0;
     }
