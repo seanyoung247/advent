@@ -1,4 +1,4 @@
-import {Graph} from './graph.mjs';
+import { Graph, Node } from './graph.mjs';
 
 function formatData(input) {
     const map = [];
@@ -8,27 +8,6 @@ function formatData(input) {
         }
     }
     return map;
-}
-
-const sqr = (n) => n*n; 
-class Node {
-    constructor(x,y,c) {
-        this.x = x;
-        this.y = y;
-        this.cost = c;
-
-        this.totalCost = Number.MAX_VALUE;
-        this.visited = false;
-        this.parent = null;
-    }
-    // Manhattan distance
-    manhattan(pos) {
-        return Math.abs(this.x - pos.x) + Math.abs(this.y - pos.y);
-    }
-    // Euclidean distance
-    distance(pos) {
-        return Math.sqrt(sqr(this.x-pos.x) + sqr(this.y-pos.y));
-    }
 }
 
 function mapToGraph(map) {
@@ -57,7 +36,7 @@ function growCave(map, factor) {
     const newMap = new Array(newH);
     const calcVal = (x, y, oldH, oldW) => (
         Math.floor( (((map[x % oldH][y % oldW].cost +   // Old Value
-            ((x / oldH) + (y / oldW))) - 1) % 9 )) + 1  // Scale to new position
+            ((x / oldH) + (y / oldW))) - 1) % 9 )+1)    // Scale to new position
     );
 
     for (let x = 0; x < newH; x++) {
@@ -80,7 +59,6 @@ function costPath(start, end) {
         node = node.parent;
         pLen++;
     }
-    console.log(pLen);
     return cost;
 }
 
@@ -88,15 +66,26 @@ export class Solutions {
     one(input) {
         const map = formatData([...input]);
         const graph = mapToGraph(map);
-        //const node = graph.D(map[0][0], map.at(-1).at(-1));
-        let node = graph.DA(map[0][0], map.at(-1).at(-1));
+
+        const t1 = performance.now();
+        let node = graph.D(map[0][0], map.at(-1).at(-1));
+        console.log("part 1 completed in: ", (performance.now() - t1)/1000, "s");
+
+        console.log(node.totalCost);
+
         return costPath(map[0][0], node);
     }
 
     two(input) {
         const map = growCave(formatData([...input]), 5);
         const graph = mapToGraph(map);
+
+        const t1 = performance.now();
         let node = graph.D(map[0][0], map.at(-1).at(-1));
+        console.log("part 2 completed in: ", (performance.now() - t1)/1000, "s");
+
+        console.log(node.totalCost);
+
         return costPath(map[0][0], node);
     }
 }

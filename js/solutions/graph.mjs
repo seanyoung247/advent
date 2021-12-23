@@ -1,4 +1,25 @@
 
+const sqr = (n) => n*n; 
+export class Node {
+    constructor(x,y,c) {
+        this.x = x;
+        this.y = y;
+        this.cost = c;
+
+        this.totalCost = Number.MAX_VALUE;
+        this.h = Number.MAX_VALUE;
+        this.parent = null;
+    }
+    // Manhattan distance
+    manhattan(pos) {
+        return Math.abs(this.x - pos.x) + Math.abs(this.y - pos.y);
+    }
+    // Euclidean distance
+    distance(pos) {
+        return Math.sqrt(sqr(this.x-pos.x) + sqr(this.y-pos.y));
+    }
+}
+
 export class Graph {
     constructor() {
         this.nodes = new Map();
@@ -22,11 +43,11 @@ export class Graph {
     // Modified aStar
     DA(start, goal) {
         const front = [];
-        front.push({n: start, w: 0});
-        start.totalCost = 0;
+        front.push(start);
+        start.totalCost = start.h = 0;
 
         while (front.length) {
-            const node = front.pop().n;
+            const node = front.pop();
 
             if (node === goal) {
                 return node;
@@ -38,12 +59,12 @@ export class Graph {
                 if (!next.visited || cost < next.totalCost) {
                     next.visited = true;
                     next.totalCost = cost;
-                    const weight = cost + next.manhattan(goal);
-                    front.push({n: next, w: weight});
+                    next.h = cost + next.manhattan(goal);
+                    front.push(next);
                     next.parent = node;
                 }
             }
-            front.sort((a,b)=>b.w-a.w);
+            front.sort((a,b)=>b.h-a.h);
         }
         return null;
     }
@@ -54,29 +75,27 @@ export class Graph {
         const origin = new Map;
         const totalCost = new Map;
 
-        front.push({n:start,w:0});
-        origin.set(start, null);
-        totalCost.set(start, 0);
+        start.totalCost = 0;
+        front.push(start);
 
         while (front.length) {
-            const node = front.pop().n;
+            const node = front.pop();
 
             if (node == goal) {
                 return node;
             }
 
             for (const next of this.nodes.get(node)) {
-                const cost = totalCost.get(node) + next.cost;
-
-                if (!totalCost.has(next) || cost < totalCost.get(next)) {
+                const cost = node.totalCost + next.cost;
+                
+                if (cost < next.totalCost) {
                     next.parent = node;
-                    totalCost.set(next, cost);
-                    front.push({n:next, w:cost});
-                    origin.set(next, node);
+                    next.totalCost = cost;
+                    front.push(next);
                 }
             }
 
-            front.sort((a,b)=>b.w-a.w);
+            front.sort((a,b)=>b.totalCost-a.totalCost);
         }
     }
     
