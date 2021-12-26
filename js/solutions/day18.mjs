@@ -40,6 +40,7 @@ function explode(number) {
                     break;
                 }
             }
+            // If a node with an unexplored right hand was found
             if (node) {
                 // Have you found the righthand value, or do we need to search the right hand?
                 if (!isPair(node[1])) {
@@ -75,7 +76,7 @@ function explode(number) {
         }
     }
 
-    depth.push({n: number, i: -1});
+    depth.push({n: null, i: -1});
     traverse(number, depth, values);
     depth.pop();
 
