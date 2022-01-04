@@ -35,7 +35,7 @@ class PacketFactory {
 
         const product = this.products.get(type);
 
-        if (product) return product([version, type], binary, start);
+        if (product) return new product([version, type], binary, start);
         return null;
     }
 }
@@ -63,7 +63,7 @@ class LiteralPacket extends Packet {
     }
     sumVersions() { return this.version; }
     evaluate() {return this.data;}
-} PacketFactory.register(4, (h, b, s)=>new LiteralPacket(h, b, s));
+} PacketFactory.register(4, LiteralPacket);
 
 class OperatorPacket extends Packet {
     constructor(header, binary, start) {
@@ -103,36 +103,36 @@ class OperatorPacket extends Packet {
 
 class OpSumPacket extends OperatorPacket {
     evaluate() { return this.packets.reduce((sum, packet) => sum += packet.evaluate(), 0); }
-} PacketFactory.register(0, (h, b, s)=>new OpSumPacket(h, b, s));
+} PacketFactory.register(0, OpSumPacket);
 
 class OpProductPacket extends OperatorPacket {
     evaluate() { return this.packets.reduce((sum, packet) => sum *= packet.evaluate(), 1); }
-} PacketFactory.register(1, (h, b, s)=>new OpProductPacket(h,b,s));
+} PacketFactory.register(1, OpProductPacket);
 
 class OpMinPacket extends OperatorPacket {
     evaluate() { return this.packets.reduce((min, packet) => Math.min(packet.evaluate(), min), Infinity); }
-} PacketFactory.register(2, (h, b, s)=>new OpMinPacket(h,b,s));
+} PacketFactory.register(2, OpMinPacket);
 
 class OpMaxPacket extends OperatorPacket {
     evaluate() { return this.packets.reduce((max, packet) => Math.max(packet.evaluate(), max), -Infinity); }
-} PacketFactory.register(3, (h, b, s)=>new OpMaxPacket(h,b,s));
+} PacketFactory.register(3, OpMaxPacket);
 
 class OpGreaterPacket extends OperatorPacket {
     evaluate() { return (this.packets[0].evaluate() > this.packets[1].evaluate())|0; }
-} PacketFactory.register(5, (h, b, s)=>new OpGreaterPacket(h,b,s));
+} PacketFactory.register(5, OpGreaterPacket);
 
 class OpLessPacket extends OperatorPacket {
     evaluate() { return (this.packets[0].evaluate() < this.packets[1].evaluate())|0; }
-} PacketFactory.register(6, (h, b, s)=>new OpLessPacket(h,b,s));
+} PacketFactory.register(6, OpLessPacket);
 
 class OpEqualPacket extends OperatorPacket {
     evaluate() { return (this.packets[0].evaluate() === this.packets[1].evaluate())|0; }
-} PacketFactory.register(7, (h, b, s)=>new OpEqualPacket(h,b,s));
+} PacketFactory.register(7, OpEqualPacket);
 
 export class Solutions {
     one(input) {
         const binary = formatData(input);
-        const packets = PacketFactory.create(binary, 0); //new Packet(binary, 0);
+        const packets = PacketFactory.create(binary, 0);
 
         return packets.sumVersions();
     }
