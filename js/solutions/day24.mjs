@@ -1,48 +1,40 @@
 
 function formatData(input) {
+    // Pull the constants out of the code, discard the rest
+    input = input.map(line => line.split(" ")).map(v => parseInt(v[2]))
+        .filter((v, i) => [4, 5, 15].some(e => e === i % 18))       // constants are on lines 5,6,16 of each 18 line block
+        .reduce((g, v, i) => (g[Math.floor(i / 3)].push(v), g), 
+            new Array(14).fill().map(()=>[])
+        );
     
+    return input;
 }
 
-const x = 0, y = 1, z = 2;
+function solve(input, calcDigit) {
+    const digits = new Array(14).fill(0);
+    const stack = [];
 
-                 //x,y,z 
-const registers = [0,0,0];
-const constants = [[15,15,1],[12,1,1]];
+    for (let i = 0; i < input.length; i++) {
+        const [z, x, y] = input[i];
 
-function stage(w, reg, con) {
-    reg[x] = reg[z];
-    reg[z] = Math.floor(reg[z]/con[z]);
-    reg[x] += con[x];
-
-    if (reg[x] != w) {
-        // Y not necessary, can simplify it away
-        reg[y] = 25;
-        reg[x] *= reg[y];
-        reg[z] *= reg[y] + 1;
-        reg[y] = w + con[y];
-        reg[y] += x;
-        reg[z] += reg[y];
+        if (z === 1) {
+            stack.push([y,i]);
+        } else {
+            const [pY, pI] = stack.pop();
+            const d = pY + x;
+            digits[pI] = calcDigit(d);
+            digits[i] = digits[pI] + d;
+        }
     }
+    return digits.reduce((p,c) => p * 10 + c);
 }
 
 export class Solutions {
     one(input) {
-        const out = new Array(10);
-        for (let i = 1; i < 10; i++) {
-            stage(i, registers, constants[0]);
-            
-            for (let j = 1; j < 10; j++) {
-                stage(j, registers, constants[1]);
-                console.log(i,j, registers[z]);
-            }
-            registers[z] = 0;
-        }
-        return 0;
+        return solve(formatData([...input]), v => Math.min(9, 9 - v));
     }
 
     two(input) {
-        return 0;
+        return solve(formatData([...input]), v => Math.max(1, 1 - v));
     }
 }
-// Zbudget = [26**len([x for x in range(len(DZ)) if DZ[x]==26 and x >= i]) for i in range(len(DZ))]
-// print("Threshold for giving up due to Z being too high, at each stage has been calculated as", Zbudget)
