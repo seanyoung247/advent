@@ -1,15 +1,7 @@
 
 def format_data(data):
     elves = data.split('\n\n')
-    calories = [] 
-
-    for elf in elves:
-        bags = elf.split('\n')
-        total = 0
-        for bag in bags:
-            total += int(bag)
-        
-        calories.append(total)
+    calories = [ sum([int(i) for i in elf.split('\n')]) for elf in elves] 
     
     return(calories)
 
