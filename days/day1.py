@@ -15,13 +15,10 @@ def format_data(data):
 
 
 def solve_one(data):
-    return(max(format_data(data)))
+    return max(format_data(data)) 
 
 
 def solve_two(data):
     calories = format_data(data)
     calories.sort(reverse=True)
-    total = 0
-    for i in range(3):
-        total += calories[i]
-    return total
+    return sum( calories[0:3] )
