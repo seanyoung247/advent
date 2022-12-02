@@ -1,11 +1,6 @@
 
-
 def format_data(data):
-    lines = data.split('\n')
-    for i in range(len(lines)):
-        lines[i] = lines[i].split(' ')
-
-    return lines
+    return [ [ col for col in line.split(' ') ] for line in data.split('\n') ]
 
 
 get_choice = lambda row,col: ord(row[col]) - (65 + (23 * col))
