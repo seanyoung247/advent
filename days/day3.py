@@ -6,9 +6,9 @@ def format_data(data):
     return data.split('\n')
 
 
-def get_priority(char):
-    """ Returns the priority of the given character """
-    return ord(char) - (38 + (58 * ((ord(char) & 32) >> 5)))
+def get_priority(item):
+    """ Returns the priority of the given item """
+    return ord(item) - (38 + (58 * ((ord(item) & 32) >> 5)))
 
 
 def solve_one(data):

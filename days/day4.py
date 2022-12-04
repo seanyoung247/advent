@@ -2,7 +2,7 @@
 
 def get_range(pair):
     """
-    Expands a given string start and stop into an
+    Expands given start and stop string list into an
     integer range.
     """
     return list(range(int(pair[0]), int(pair[1]) + 1))
@@ -25,14 +25,14 @@ def subset_pair(pair):
 
 
 def solve(data, test):
-    """ Generator function return 1 if pair conforms to test otherwise 0 """
+    """ Generator function returns 1 if pair conforms to test otherwise 0 """
     for pair in data:
         yield(1 if test(pair) else 0)
 
 
 def solve_one(data):
     """ Solves part one of day 4 """
-    return sum(solve(format_data(data), subset_pair ))
+    return sum(solve(format_data(data), subset_pair))
 
 
 def solve_two(data):
