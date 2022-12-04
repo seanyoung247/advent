@@ -3,7 +3,8 @@ def format_data(data):
     return [ [ col for col in line.split(' ') ] for line in data.split('\n') ]
 
 
-get_val = lambda row,col: ord(row[col]) - (65 + (23 * col))
+def get_val(row,col):
+    return ord(row[col]) - (65 + (23 * col))
 
 
 def solve_one(data):
