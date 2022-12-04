@@ -1,13 +1,18 @@
+""" Solves challenge for day 3 of AoC 2022 """
+# pylint: disable=consider-using-generator
 
 def format_data(data):
+    """ pre-formats data string"""
     return data.split('\n')
 
 
-def get_priority(ch): 
-    return ord(ch) - (38 + (58 * ((ord(ch) & 32) >> 5)))
+def get_priority(char):
+    """ Returns the priority of the given character """
+    return ord(char) - (38 + (58 * ((ord(char) & 32) >> 5)))
 
 
 def solve_one(data):
+    """ Solves part one of day 3 """
     return sum([
         sum([
             get_priority(item)
@@ -18,6 +23,7 @@ def solve_one(data):
 
 
 def solve_two(data):
+    """ Solves part two of day 3 """
     bags = format_data(data)
     return sum([
         sum([
