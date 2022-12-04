@@ -30,15 +30,10 @@ def solve_day(day, data):
 def main(args):
     """ Runs all requested solutions """
     folder = 'tests' if args.test else 'data'
-    days = range(1,25) if args.all else [args.day]
+    days = range(1,len(solutions)+1) if args.all else [args.day]
     for day in days:
-        data_file = f'{folder}/day{day}.txt'
-        try:
-            solution = solutions[day-1]
-        except IndexError:
-            break
         print(f'Day {day}:')
-        solve_day(solution, load_data(data_file))
+        solve_day(solutions[day-1], load_data(f'{folder}/day{day}.txt'))
 
 
 if __name__ == '__main__':
