@@ -1,18 +1,31 @@
 
+def get_range(pair):
+    return list(range(int(pair[0]), int(pair[1]) + 1))
+
+
 def format_data(data):
-    return  [ 
-        [
-            list(range(int(p.split('-')[0]), int(p.split('-')[1])+1)) 
-            for p in pair.split(',')
-        ]
-        for pair in data.split('\n') if pair 
+    return  [
+        [ get_range(p.split('-')) for p in pair.split(',')]
+        for pair in data.split('\n') if pair
     ]
 
-subset_pair = lambda p: (p[0][0] in p[1] and p[0][-1] in p[1]) or (p[1][0] in p[0] and p[1][-1] in p[0])
+
+def subset_pair(pair):
+    return (
+        (pair[0][0] in pair[1] and pair[0][-1] in pair[1]) or
+        (pair[1][0] in pair[0] and pair[1][-1] in pair[0])
+    )
+
+
+def solve(data, test):
+    for pair in data:
+        yield(1 if test(pair) else 0)
+
 
 def solve_one(data):
-    return sum([1 for pair in format_data(data) if subset_pair(pair)])
+    return sum(solve(format_data(data), subset_pair ))
 
 
 def solve_two(data):
-    return sum([1 for pair in format_data(data) if any(item in pair[0] for item in pair[1]) ])
+    return sum(solve(format_data(data),
+        lambda pair: any(item in pair[0] for item in pair[1])))
