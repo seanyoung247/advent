@@ -20,3 +20,4 @@ def solve_two(data):
         (get_val(line,1) * 3) + combinations[get_val(line,0)][get_val(line,1)]
         for line in format_data(data) 
     ])
+    
