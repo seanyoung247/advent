@@ -29,6 +29,10 @@ def solve_day(day, data):
 
 def main(args):
     """ Runs all requested solutions """
+    if not args.all and args.day >= len(solutions):
+        print("That day hasn't been solved yet!")
+        return
+
     folder = 'tests' if args.test else 'data'
     days = range(1,len(solutions)+1) if args.all else [args.day]
     for day in days:
