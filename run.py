@@ -38,7 +38,7 @@ def main(args):
 
 if __name__ == '__main__':
     # If it's currently december the default day should be the current one.
-    # Otherwise default to day 1
+    # Otherwise default day = 1
     default_day = date.today().day if date.today().month == 12 else 1
 
     parser = argparse.ArgumentParser(description='Runs code solutions for Advent of Code 2022')

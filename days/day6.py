@@ -2,12 +2,13 @@
 
 def solve(data, step):
     """
-    Finds first group of characters of step length in data that have no
-    repeated characters and returns the index of the last character in the group
+    Finds first group of characters of step length in data that have no repeated
+    characters and returns the index in data of the last character in the group
     """
     for i in range(len(data) - step):
-        if len(set(data[i:i + step])) == len(data[i:i + step]):
-            return i + step
+        last = i + step
+        if len(set(data[i:last])) == len(data[i:last]):
+            return last
     return None
 
 
