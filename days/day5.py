@@ -7,10 +7,11 @@ def format_data(data):
 
     cols = int(sections[0][-1].strip()[-1])
     rows = len(sections[0]) - 1
+    col_width = 4
 
     stacks = [
-        [sections[0][r][c*4+1:c*4+2] for r in reversed(range(rows))
-        if sections[0][r][c*4+1:c*4+2] != ' ']
+        [sections[0][r][c*col_width+1:c*col_width+2] for r in reversed(range(rows))
+        if sections[0][r][c*col_width+1:c*col_width+2] != ' ']
         for c in range(cols)
     ]
 
@@ -21,21 +22,19 @@ def format_data(data):
     return stacks, commands
 
 
+def solve(stacks, commands, action):
+    """ Performs all commands on stacks with action passed """
+    for cmd in commands:
+        stacks[cmd[2]-1].extend(action(stacks[cmd[1]-1][0 - cmd[0]:]))
+        del stacks[cmd[1]-1][0 - cmd[0]:]
+    return stacks
+
+
 def solve_one(data):
     """ Solves part one of day 5 """
-    stacks,commands = format_data(data)
-    for cmd in commands:
-        stacks[cmd[2]-1].extend(reversed(stacks[cmd[1]-1][0 - cmd[0]:]))
-        del stacks[cmd[1]-1][0 - cmd[0]:]
-
-    return ''.join([ stack[-1] for stack in stacks if len(stack) > 0])
+    return ''.join([stack[-1] for stack in solve(*format_data(data), reversed) if len(stack) > 0])
 
 
 def solve_two(data):
     """ Solves part two of day 5 """
-    stacks,commands = format_data(data)
-    for cmd in commands:
-        stacks[cmd[2]-1].extend(stacks[cmd[1]-1][0 - cmd[0]:])
-        del stacks[cmd[1]-1][0 - cmd[0]:]
-
-    return ''.join([ stack[-1] for stack in stacks if len(stack) > 0])
+    return ''.join([stack[-1] for stack in solve(*format_data(data), lambda x:x) if len(stack) > 0])
