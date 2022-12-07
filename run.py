@@ -29,7 +29,7 @@ def solve_day(day, data):
 
 def main(args):
     """ Runs all requested solutions """
-    if not args.all and args.day >= len(solutions):
+    if not args.all and args.day > len(solutions):
         print("That day hasn't been solved yet!")
         return
 
