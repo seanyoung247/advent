@@ -4,36 +4,40 @@ def format_data(data):
     """ pre-formats data string"""
     commands = [ line.split(' ') for line in data.split('\n')]
     stack = []
-    directories = []
-    # Go through each line of input
+    directories = {}
     for line in commands:
-        if line[0] == '$':
-            if line[1] == 'cd':
-                if line[2] == '..':
-                    directories.append(stack.pop(-1))
-                else:
-                    stack.append([line[2],0])
-        elif line[0].isdigit():
+        if line[0].isdigit():
             for directory in stack:
                 directory[1] += int(line[0])
-    directories.extend(stack)
+        elif line[1] == 'cd' and line[2] == '..':
+            # directories.append(stack.pop(-1))
+            directories.update(dict(zip(i := iter(stack.pop(-1)),i)))
+        elif line[1] == 'cd':
+            stack.append([line[2],0])
+
+    directories.update({item[0]: item[1] for item in stack})
+    # print(directories)
+    # directories.extend(stack)
     return directories
 
 
-def dir_size(directories, criteria):
+def solve(directories, criteria):
     """ Returns only the size of directories that match criteria """
-    for directory in directories:
-        if criteria(directory[1]):
-            yield directory[1]
+    for directory in directories.values():
+        print(directory)
+        if criteria(directory):
+            print(directory)
+            yield directory
 
 
 def solve_one(data):
     """ Solves part one of day 7 """
     max_size = 100000
-    return sum(dir_size(format_data(data), lambda size: size <= max_size))
+    return sum(solve(format_data(data), lambda size: size <= max_size))
 
 
 def solve_two(data):
     """ Solves part two of day 7 """
-    required = 30000000
-    return min(size[1] for size in format_data(data) if size[1] > required)
+    directories = format_data(data)
+    required = directories['/'] - 40000000
+    return min(solve(directories, lambda size: size >= required))
