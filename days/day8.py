@@ -25,7 +25,7 @@ def solve_col(col, data, visible):
             max_tree = data[r][col]
             visible[r][col] = 1
     max_tree = data[-1][col]
-    for r in reversed(range(len(data))):
+    for r in range(len(data) - 1, -1, -1):
         if data[r][col] > max_tree:
             max_tree = data[r][col]
             visible[r][col] = 1
