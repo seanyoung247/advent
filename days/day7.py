@@ -1,6 +1,5 @@
 """ Solves challenge for day 7 of AoC 2022 """
 
-
 def format_data(data):
     """ pre-formats data string"""
     commands = [ line.split(' ') for line in data.split('\n')]
