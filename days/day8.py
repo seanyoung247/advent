@@ -5,30 +5,30 @@ def format_data(data):
     return [[int(char) for char in line] for line in data.split('\n')]
 
 
+def scan_range(rng, smax, trees, visible):
+    max_tree = smax
+    for i in rng:
+        if trees(i) > max_tree:
+            max_tree = trees(i)
+            visible(i)
+
+
 def solve_row(row, visible):
-    max_tree = row[0]
-    for i,col in enumerate(row):
-        if col > max_tree:
-            max_tree = col
-            visible[i] = 1
-    max_tree = row[-1]
-    for i,col in reversed(list(enumerate(row))):
-        if col > max_tree:
-            max_tree = col
-            visible[i] = 1
+    tree = lambda i:row[i]
+    def set_visible(i):
+        visible[i] = 1
+
+    scan_range(range(len(row)), row[0], tree, set_visible)
+    scan_range(range(len(row)-1, -1, -1), row[-1], tree, set_visible)
 
 
 def solve_col(col, data, visible):
-    max_tree = data[0][col]
-    for r in range(len(data)):
-        if data[r][col] > max_tree:
-            max_tree = data[r][col]
-            visible[r][col] = 1
-    max_tree = data[-1][col]
-    for r in range(len(data) - 1, -1, -1):
-        if data[r][col] > max_tree:
-            max_tree = data[r][col]
-            visible[r][col] = 1
+    tree = lambda i:data[i][col]
+    def set_visible(i):
+        visible[i][col] = 1
+    
+    scan_range(range(len(data)), data[0][col], tree, set_visible)
+    scan_range(range(len(data)-1, -1, -1), data[-1][col], tree, set_visible)
 
 
 def solve_one(data):

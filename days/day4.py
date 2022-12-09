@@ -39,4 +39,5 @@ def solve_one(data):
 def solve_two(data):
     """ Solves part two of day 4 """
     return sum(solve(format_data(data),
-        lambda pair: any(item in pair[0] for item in pair[1])))
+        lambda pair: any(item in pair[0] for item in pair[1])
+    ))
