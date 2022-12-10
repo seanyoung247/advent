@@ -1,64 +1,53 @@
 """ Solves challenge for day 9 of AoC 2022 """
 
-import math
+class Coord:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+    
+    def __add__(self, other):
+        return Coord(self.x + other.x, self.y + other.y)
+    
+    def __sub__(self, other):
+        return Coord(self.x - other.x, self.y - other.y)
+
+    def vector(self):
+        return Coord(sign(self.x), sign(self.y))
+
+    def value(self):
+        return (self.x, self.y)
+
 
 def format_data(data):
     """ pre-formats data string"""
-    return [tuple(line.split()) for line in data.split('\n')]
+    return [(line.split()[0],int(line.split()[1])) for line in data.split('\n')]
 
 
-update_pos = {
-    'U': lambda p: (p[0],p[1]-1),
-    'D': lambda p: (p[0],p[1]+1),
-    'L': lambda p: (p[0]-1,p[1]),
-    'R': lambda p: (p[0]+1,p[1]),
-}
+dirs = {"U": Coord(0,1), "R": Coord(1,0), "L": Coord(-1,0), "D": Coord(0,-1)}
 
 
-def distance(p1, p2):
-    x = (p1[0] - p2[0]) ** 2
-    y = (p1[1] - p2[1]) ** 2
-    return x+y
+def sign(num):
+    return (num > 0) - (num < 0)
 
 
-def update_tail(tail_pos, head_pos, move):
-    adjacent = [
-        update_pos['U'](head_pos),
-        update_pos['D'](head_pos),
-        update_pos['L'](head_pos),
-        update_pos['R'](head_pos),
-    ]
-    diagonals = [
-        head_pos,
-        (head_pos[0]-1,head_pos[1]-1),
-        (head_pos[0]+1,head_pos[1]-1),
-        (head_pos[0]-1,head_pos[1]+1),
-        (head_pos[0]+1,head_pos[1]+1),
-    ]
-    
-    if (tail_pos in adjacent) or (tail_pos in diagonals):
-        return tail_pos
-
-    test = min(adjacent, key=lambda x: distance(x, tail_pos))
-    return test
+def solve(moves, rope):
+    visited = set()
+    for dir, distance in moves:
+        for _ in range(distance):
+            rope[0] = rope[0] + dirs[dir]
+            for i in range(1,len(rope)):
+                delta = rope[i-1] - rope[i]
+                if abs(delta.x) == 2 or abs(delta.y) == 2:
+                    rope[i] = rope[i] + delta.vector()
+            visited.add(rope[-1].value())
+    return len(visited)
 
 
 def solve_one(data):
     """ Solves part one of day 9 """
-    moves = format_data(data)
-    visited = set()
-    head_pos = (0,0)
-    tail_pos = (0,0)
-    visited.add(tail_pos)
-    for move in moves:
-        for _ in range(int(move[1])):
-            head_pos = update_pos[move[0]](head_pos)
-            tail_pos = update_tail(tail_pos,head_pos,move[0])
-            visited.add(tail_pos)
-            
-    return len(visited)
-
+    return solve(format_data(data), [Coord(0,0) for _ in range(2)])
 
 
 def solve_two(data):
     """ Solves part two of day 9 """
+    return solve(format_data(data), [Coord(0,0) for _ in range(10)])
