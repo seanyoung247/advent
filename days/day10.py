@@ -2,47 +2,45 @@
 
 def format_data(data):
     """ pre-formats data string"""
-    return [ (line.split(' ')[0], int(line.split(' ')[1]) ) if len(line.split(' ')) == 2 else (line, 0) for line in data.split('\n') ]
+    return [
+        (line.split(' ')[0], int(line.split(' ')[1]) )
+        if len(line.split(' ')) == 2 else (line, 0) for line in data.split('\n')
+    ]
 
 
 opcodes = {
     'addx': lambda x,v,c: (x+v,c+2),
-    'noop': lambda x,v,c: (x,c+1),
+    'noop': lambda x,_,c: (x,c+1),
 }
+
+
+def solve(ops):
+    """ Runs through all provided operations and simulates machine state """
+    state = {'X':1,'C':1}
+    next_state = {'X':1,'C':1}
+    signal = 0
+    screen = [[' ']*40 for _ in range(6)]
+
+    while len(ops):
+        if state['C'] >= next_state['C']:
+            state['X'] = next_state['X']
+            opcode,val = ops.pop(0)
+            next_state['X'], next_state['C'] = opcodes[opcode](state['X'],val,state['C'])
+
+        signal += state['X'] * state['C'] if (state['C'] - 20) % 40 == 0 else 0
+
+        pixel, line = ((state['C']-1) % 40, int((state['C']-1) / 40))
+        screen[line][pixel] = '█' if pixel in range(state['X']-1,state['X']+2) else ' '
+        state['C'] += 1
+
+    return signal, '\n' + '\n'.join([f"\t\t{''.join(line)}" for line in screen])
 
 
 def solve_one(data):
     """ Solves part one of day 10 """
-    X = 1
-    cycle = 1
-    signal = []
-    cycles = [20,60,100,140,180,220]
-    
-    for op,val in format_data(data):
-        X, cycle = opcodes[op](X, val, cycle)
-        if len(cycles) > 0 and (cycle >= cycles[0] or cycle == cycles[0]-1):
-            signal.append(X*cycles[0])
-            cycles.pop(0)
-    return sum(signal)      
+    return solve(format_data(data))[0]
 
 
 def solve_two(data):
     """ Solves part two of day 10 """
-    ops = format_data(data)
-    X = 1
-    next_X = 1
-    cycle = 1
-    screen = [[' ']*40 for _ in range(6)]
-    next_cycle = 1
-    
-    while len(ops):
-        pixel, line = ((cycle-1) % 40, int((cycle-1) / 40))
-        cycle += 1
-        if cycle >= next_cycle:
-            X = next_X
-            op,val = ops.pop(0)
-            next_X, next_cycle = opcodes[op](X,val,cycle)
-        
-        screen[line][pixel] = '█' if pixel in range(X-1,X+2) else ' '
-    
-    return '\n' + '\n'.join([f"\t\t{''.join(line)}" for line in screen])
+    return solve(format_data(data))[1]
