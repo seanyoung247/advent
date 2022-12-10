@@ -11,11 +11,19 @@ class Coord:
     def __sub__(self, other):
         return Coord(self.x - other.x, self.y - other.y)
 
-    def vector(self):
-        return Coord(sign(self.x), sign(self.y))
+    def __hash__(self):
+        return hash((self.x,self.y))
 
-    def value(self):
-        return (self.x, self.y)
+    def __eq__(self, other):
+        if not isinstance(other, type(self)):
+            return False
+        return (self.x == other.x and self.y == other.y)
+
+    def direction(self):
+        return Coord(
+            (self.x > 0) - (self.x < 0),
+            (self.y > 0) - (self.y < 0)
+        )
 
 
 def format_data(data):
@@ -26,10 +34,6 @@ def format_data(data):
 dirs = {"U": Coord(0,1), "R": Coord(1,0), "L": Coord(-1,0), "D": Coord(0,-1)}
 
 
-def sign(num):
-    return (num > 0) - (num < 0)
-
-
 def solve(moves, rope):
     visited = set()
     for dir, distance in moves:
@@ -38,8 +42,8 @@ def solve(moves, rope):
             for i in range(1,len(rope)):
                 delta = rope[i-1] - rope[i]
                 if abs(delta.x) == 2 or abs(delta.y) == 2:
-                    rope[i] = rope[i] + delta.vector()
-            visited.add(rope[-1].value())
+                    rope[i] = rope[i] + delta.direction()
+            visited.add(rope[-1])
     return len(visited)
 
 
