@@ -10,8 +10,8 @@ class Monkey:
         self.operation = lines[2].split('=')[-1]
         self.test = int(lines[3].split()[-1])
         self.conditions = [
-            int(lines[5].split()[-1]),
-            int(lines[4].split()[-1])
+            int(lines[5].split()[-1]),  # False
+            int(lines[4].split()[-1])   # True
         ]
         self.inspections = 0
 
