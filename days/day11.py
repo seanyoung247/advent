@@ -1,11 +1,13 @@
 """ Solves challenge for day 11 of AoC 2022 """
+# pylint: disable=eval-used
+# pylint: disable=unused-variable
 
 import math
 
 class Monkey:
+    """ Models a single cheeky monkey """
     def __init__(self, data):
         lines = data.split('\n')
-        self.id = int(lines[0][:-1].split()[1])
         self.items = list(map(int, lines[1].split(':')[1].split(',')))
         self.operation = lines[2].split('=')[-1]
         self.test = int(lines[3].split()[-1])
@@ -16,15 +18,22 @@ class Monkey:
         self.inspections = 0
 
     def catch_item(self, item):
+        """
+        Catches an item thrown by another monkey and adds it
+        to this monkey's inventory
+        """
         self.items.append(item)
-    
+
     def inspect_items(self, monkeys, normalise):
+        """
+        Inspects all the monkey's items in turn
+        """
         self.inspections += len(self.items)
-        while (len(self.items) > 0):
+        while len(self.items) > 0:
             old = self.items.pop(0)
             new = normalise(eval(self.operation))
             monkeys[self.conditions[(new % self.test == 0)]].catch_item(new)
-        
+
 
 def format_data(data):
     """ pre-formats data string"""
@@ -36,6 +45,7 @@ def format_data(data):
 
 
 def rounds(monkeys, count, normalise):
+    """ Runs all the simulation rounds """
     while count > 0:
         count -= 1
         for monkey in monkeys:
@@ -45,7 +55,7 @@ def rounds(monkeys, count, normalise):
 
 def solve_one(data):
     """ Solves part one of day 11 """
-    monkeys = sorted(rounds(format_data(data), 20, lambda x: x // 3), 
+    monkeys = sorted(rounds(format_data(data), 20, lambda x: x // 3),
         key=lambda monkey: monkey.inspections, reverse=True)
     return monkeys[0].inspections * monkeys[1].inspections
 
@@ -54,7 +64,7 @@ def solve_two(data):
     """ Solves part two of day 11 """
     monkeys = format_data(data)
     product = math.prod([monkey.test for monkey in monkeys])
-    monkeys = sorted(rounds(format_data(data), 10000, lambda x: x % product), 
+    monkeys = sorted(rounds(format_data(data), 10000, lambda x: x % product),
         key=lambda monkey: monkey.inspections, reverse=True)
 
     return monkeys[0].inspections * monkeys[1].inspections
