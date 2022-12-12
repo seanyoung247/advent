@@ -26,7 +26,6 @@ class Monkey:
             monkeys[self.conditions[(new % self.test == 0)]].catch_item(new)
         
 
-
 def format_data(data):
     """ pre-formats data string"""
     monkeys_data = data.split('\n\n')
@@ -48,7 +47,6 @@ def solve_one(data):
     """ Solves part one of day 11 """
     monkeys = sorted(rounds(format_data(data), 20, lambda x: x // 3), 
         key=lambda monkey: monkey.inspections, reverse=True)
-
     return monkeys[0].inspections * monkeys[1].inspections
 
 

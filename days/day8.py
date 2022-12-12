@@ -54,6 +54,7 @@ def solve_one(data):
     return sum([sum(line) for line in visible])
 
 
+
 def scenic_score(row, col, data):
     tree = data[row][col]
 
