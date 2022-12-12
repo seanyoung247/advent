@@ -15,8 +15,8 @@ for i in range(1,25):
         break
 
 
-def load_data(file):
-    """ Loads solution data input file """
+def load_file(file):
+    """ Loads input file and returns contents """
     with open(file, encoding="utf-8") as data_file:
         return data_file.read()
 
@@ -27,17 +27,36 @@ def solve_day(day, data):
     print('\tPart two: ', day.solve_two(data))
 
 
+def create_challenge_files(day):
+    """ Creates a  """
+    if day > len(solutions):
+        challenge_file = load_file('days/day_template.tmp')
+        challenge_file = challenge_file.replace('{x}', f'{day}')
+
+        with (open(f'days/day{day}.py', 'w', encoding='utf-8') as py_file,
+            open(f'data/day{day}.txt', 'w', encoding='utf-8'),
+            open(f'tests/day{day}.txt', 'w',encoding='utf-8')):
+            py_file.write(challenge_file)
+
+        return
+    print('Challenge files already exists')
+
+
 def main(args):
     """ Runs all requested solutions """
+    if args.add:
+        create_challenge_files(args.day)
+        return
+
     if not args.all and args.day > len(solutions):
-        print("That day hasn't been solved yet!")
+        print("No challenge files for requested day!")
         return
 
     folder = 'tests' if args.test else 'data'
     days = range(1,len(solutions)+1) if args.all else [args.day]
     for day in days:
         print(f'Day {day}:')
-        solve_day(solutions[day-1], load_data(f'{folder}/day{day}.txt'))
+        solve_day(solutions[day-1], load_file(f'{folder}/day{day}.txt'))
 
 
 if __name__ == '__main__':
@@ -57,6 +76,9 @@ if __name__ == '__main__':
     )
     parser.add_argument(
         '-t', '--test', action='store_true', help='Uses test data instead of real data'
+    )
+    parser.add_argument(
+        '--add', action='store_true', help='Creates files for today\'s challenge.'
     )
 
     main(parser.parse_args())

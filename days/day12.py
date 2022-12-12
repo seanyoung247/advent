@@ -9,7 +9,7 @@ class AoCGrid (Grid):
     """ Grid class for AoC day 12 """
     def neighbors(self, node, diagonal_movement=DiagonalMovement.never):
         """
-        Alters neighbors to only return nodes that can be reached
+        Overrides neighbors to only return nodes that can be reached
         from the current one
         """
         return [
@@ -22,8 +22,8 @@ class AoCFinder (AStarFinder):
     """ Path finder for AoC day 12 """
     def find_path(self, start, end, grid):
         """
-        Alters find_path to take a list of start nodes and find the
-        shortest path for all starts in a single pass
+        Overrides find_path to take a list of start nodes and find the
+        shortest path for all starting nodes in a single pass
         """
         for node in start:
             node.opened = True
@@ -67,6 +67,7 @@ def solve(start, end, matrix):
     finder = AoCFinder()
     path = finder.find_path(start, end, grid)
     return len(path) - 1
+
 
 def solve_one(data):
     """ Solves part one of day 12 """
