@@ -23,26 +23,17 @@ class AoCFinder (AStarFinder):
         Alters find_path to take a list of start nodes and find the 
         shortest path for all starts in a single pass 
         """
-        self.start_time = time.time()
-        self.runs = 0
-        
         for node in start:
             node.opened = True
             node.g = 0
             node.f = 0
-        
         open_list = start
-
+        
         while len(open_list) > 0:
-            self.runs += 1
-            self.keep_running()
-
             path = self.check_neighbors(start[0], end, grid, open_list)
             if path:
-                return path, self.runs
-
-        # failed to find path
-        return [], self.runs
+                return path
+        return []
 
 
 def format_data(data, part_two=False):
@@ -73,7 +64,7 @@ def solve(start, end, matrix):
     start = [grid.node(node[0],node[1]) for node in start]
     end = grid.node(end[0],end[1])
     finder = AoCFinder()
-    path = finder.find_path(start, end, grid)[0]
+    path = finder.find_path(start, end, grid)
     return len(path) - 1
 
 def solve_one(data):
