@@ -7,6 +7,10 @@ from pathfinding.core.diagonal_movement import DiagonalMovement
 
 class AoCGrid (Grid):
     def neighbors(self, node, diagonal_movement=DiagonalMovement.never):
+        """ 
+        Alters neighbors to only return nodes that can be reached 
+        from the current one
+        """
         return [
             n for n in super().neighbors(node, diagonal_movement) 
             if n.weight <= (node.weight + 1)
@@ -15,6 +19,10 @@ class AoCGrid (Grid):
 
 class AoCFinder (AStarFinder):
     def find_path(self, start, end, grid):
+        """ 
+        Alters find_path to take a list of start nodes and find the 
+        shortest path for all starts in a single pass 
+        """
         self.start_time = time.time()
         self.runs = 0
         
@@ -60,6 +68,7 @@ def format_data(data, part_two=False):
 
 
 def solve(start, end, matrix):
+    """ Prepares a grid and paths from start to end based on matrix """
     grid = AoCGrid(matrix=matrix)
     start = [grid.node(node[0],node[1]) for node in start]
     end = grid.node(end[0],end[1])
