@@ -30,7 +30,7 @@ def solve(ops):
         signal += state['X'] * state['C'] if (state['C'] - 20) % 40 == 0 else 0
 
         pixel, line = ((state['C']-1) % 40, int((state['C']-1) / 40))
-        screen[line][pixel] = '█' if pixel in range(state['X']-1,state['X']+2) else ' '
+        screen[line][pixel] = '█' if state['X']-1 <= pixel <= state['X']+1 else ' '
         state['C'] += 1
 
     return signal, '\n' + '\n'.join([f"\t\t{''.join(line)}" for line in screen])
