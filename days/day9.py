@@ -1,5 +1,4 @@
 """ Solves challenge for day 9 of AoC 2022 """
-# pylint: disable=invalid-name
 
 class Coord:
     """ Defines a single 2D coordinate """

@@ -23,21 +23,14 @@ def subset_pair(pair):
         (pair[1][0] >= pair[0][0] and pair[1][-1] <= pair[0][-1])
     )
 
-
-def solve(data, test):
-    """ Generator function returns 1 for every pair conforming to test """
-    for pair in data:
-        if test(pair):
-            yield 1
-
-
 def solve_one(data):
     """ Solves part one of day 4 """
-    return sum(solve(format_data(data), subset_pair))
+    return sum(1 for pair in format_data(data) if subset_pair(pair))
 
 
 def solve_two(data):
     """ Solves part two of day 4 """
-    return sum(solve(format_data(data),
-        lambda pair: any(item in pair[0] for item in pair[1])
-    ))
+    return sum( 
+        1 for pair in format_data(data) 
+        if any(item in pair[0] for item in pair[1])
+    )

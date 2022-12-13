@@ -18,21 +18,14 @@ def format_data(data):
     return directories
 
 
-def solve(directories, criteria):
-    """ Returns only the size of directories that match criteria """
-    for directory in directories:
-        if criteria(directory[1]):
-            yield directory[1]
-
-
 def solve_one(data):
     """ Solves part one of day 7 """
     max_size = 100000
-    return sum(solve(format_data(data), lambda size: size <= max_size))
+    return sum(directory[1] for directory in format_data(data) if directory[1] <= max_size)
 
 
 def solve_two(data):
     """ Solves part two of day 7 """
     directories = sorted(format_data(data), key=lambda x:x[1])
     required = directories[-1][1] - 40000000
-    return min(solve(directories, lambda size: size >= required))
+    return min(directory[1] for directory in directories if directory[1] >= required)

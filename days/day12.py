@@ -43,18 +43,18 @@ def format_data(data, part_two=False):
     rows = data.split('\n')
     goals = {'S':[],'E':(0,0)}
     matrix = [[None] * len(rows[0]) for _ in range(len(rows))]
-    for idx_y,row in enumerate(rows):
-        for idx_x,tile in enumerate(row):
+    for y,row in enumerate(rows):
+        for x,tile in enumerate(row):
             if tile == 'S':
-                goals['S'].append((idx_x,idx_y))
-                matrix[idx_y][idx_x] = 1
+                goals['S'].append((x,y))
+                matrix[y][x] = 1
             elif tile == 'E':
-                goals['E'] = (idx_x,idx_y)
-                matrix[idx_y][idx_x] = 26
+                goals['E'] = (x,y)
+                matrix[y][x] = 26
             else:
-                matrix[idx_y][idx_x] = ord(tile) - 96
+                matrix[y][x] = ord(tile) - 96
             if part_two and tile == 'a':
-                goals['S'].append((idx_x,idx_y))
+                goals['S'].append((x,y))
 
     return goals, matrix
 

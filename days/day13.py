@@ -40,7 +40,7 @@ class Packet:
 
 def format_data(data):
     """ pre-formats data string"""
-    return [Packet(json.loads(line)) for line in data.split('\n') if line ]
+    return [Packet(json.loads(line)) for line in data.split('\n') if line]
 
 
 def solve_one(data):
