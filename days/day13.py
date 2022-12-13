@@ -1,6 +1,6 @@
 """ Solves challenge for day 13 of AoC 2022 """
+from functools import total_ordering
 import json
-
 
 def compare(left, right):
     """
@@ -21,55 +21,42 @@ def compare(left, right):
             return compare(left,[right])
 
 
+@total_ordering
 class Packet:
     """ Models a single packet """
     def __init__(self, packet):
         self.packet = packet
 
-    def comp(self, other):
+    def compare(self, other):
         """ compares the two packets """
         return compare(self.packet, other.packet)
 
     def __eq__(self, other):
-        return self.comp(other) == 0
+        return self.compare(other) == 0
 
     def __lt__(self, other):
-        return self.comp(other) < 0
-
-    def __gt__(self, other):
-        return self.comp(other) > 0
-
-    def __ge__(self, other):
-        return self.comp(other) >= 0
-
-    def __le__(self, other):
-        return self.comp(other) <= 0
+        return self.compare(other) < 0
 
 
 def format_data(data):
     """ pre-formats data string"""
-    return [(
-            Packet(json.loads(pair.split('\n')[0])),
-            Packet(json.loads(pair.split('\n')[1]))
-        )
-        for pair in data.split('\n\n')
-    ]
+    return [Packet(json.loads(line)) for line in data.split('\n') if line ]
 
 
 def solve_one(data):
     """ Solves part one of day 13 """
-    packets = enumerate(format_data(data))
+    data = format_data(data)
+    packets = enumerate(zip(data[::2],data[1::2]))
     return sum(
-        idx + 1 for idx,(left,right) in packets 
+        idx + 1 for idx,(left,right) in packets
         if left < right
     )
 
 
 def solve_two(data):
     """ Solves part two of day 13 """
-    dividers = (Packet([[2]]), Packet([[6]]))
-    packets = [item for pair in format_data(data) for item in pair]
+    packets = format_data(data)
     return (
-        (sum(i <= dividers[0] for i in packets) + 1) * 
-        (sum(i <= dividers[1] for i in packets) + 2)
+        (sum(packet < Packet([[2]]) for packet in packets) + 1) *
+        (sum(packet < Packet([[6]]) for packet in packets) + 2)
     )
